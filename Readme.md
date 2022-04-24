@@ -1,3 +1,7 @@
+# Documentation 
+1. [Documentation](./docs/README.md)
+1. 
+
 # Xendit Coding Exercise
 
 The goal of these exercises are to assess your proficiency in software engineering that is related to the daily work that we do at Xendit. Please follow the instructions below to complete the assessment.
@@ -102,6 +106,3 @@ Please implement load testing to ensure your service can handle a high amount of
     3. Test all endpoints under at least `100 rps` for `30s` and ensure that `p99` is under `50ms`
 
 
-# Task Listed 
-1. [Documentation](./docs/README.md) - [(Pull Request)]()
-1. 
