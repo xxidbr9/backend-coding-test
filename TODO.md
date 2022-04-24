@@ -8,7 +8,8 @@
 - [ ] Github action for PR
 
 # STEP BY STEP
-- [ ] Create REPO `backend-coding-test`
+- [X] Create REPO `backend-coding-test`
+- [X] Create Documentation
 - [ ] Create CICD Using github action 
     - [ ] Change to Typescript ✨👌🏻 
     - [ ] Unit Test 80% using `nyc`
