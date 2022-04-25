@@ -11,14 +11,14 @@
 - [X] Create REPO `backend-coding-test`
 - [X] Create Documentation
 - [X] Create CICD Using github action 
-    - [ ] Change to Typescript ✨👌🏻 
-    - [ ] Unit Test 80% using `nyc`
-    - [ ] git hook using `pre-push`
-    - [ ] add logging system using `winston`
-    - [ ] Add linter 
-      - [ ] Do PR
-    - [ ] Add Coverage result on test
-      - [ ] Do PR
+    - [X] Change to Typescript ✨👌🏻 
+    - [X] Unit Test 80% using `nyc`
+    - [X] git hook using `pre-push` / `change to husky`
+    - [X] add logging system using `winston`
+    - [x] Add linter 
+      - [X] Do PR
+    - [X] Add Coverage result on test
+      - [X] Do PR
 ==========
 - [ ] DDD Hexagonal 
   - [ ] Separate test for each service 100% coverage

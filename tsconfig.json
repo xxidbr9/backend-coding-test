@@ -1,0 +1,27 @@
+{
+  "display": "Node 10",
+  "extends": "@tsconfig/node10/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "lib": ["es6", "ESNext"],
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "checkJs": false,
+    "allowJs": true,
+    "moduleResolution": "Node",
+    "baseUrl": "./",
+    "types": ["node","mocha"],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+  },
+  "exclude": ["node_modules", "__tests__"],
+
+  "include": ["./src", "./src/types"]
+}
