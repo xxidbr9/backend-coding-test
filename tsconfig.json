@@ -8,7 +8,7 @@
     "outDir": "./dist",
     "rootDir": ".",
     "strict": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "noImplicitAny": true,
     "checkJs": false,
     "allowJs": true,

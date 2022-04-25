@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3'
-import buildSchemas from './src/schemas';
-import buildAppWithDb from './src/app';
-import log from './src/utils/libs/log'
+import buildSchemas from './schemas';
+import buildAppWithDb from './app';
+import log from './utils/libs/log'
 
 const sqlite = sqlite3.verbose()
 const db = new sqlite.Database(':memory:');

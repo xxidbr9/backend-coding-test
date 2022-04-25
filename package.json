@@ -8,10 +8,10 @@
     },
     "scripts": {
         "prebuild": "rimraf dist",
-        "build": "yarn prebuild && tsc",
+        "build": "npm run prebuild && tsc",
         "test": "rimraf .nyc_* npm run lint --fix && nyc mocha tests --parallel --require ts-node/register ./tests/*.test.ts",
-        "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./index.ts ",
-        "start": "node index.js",
+        "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/index.ts ",
+        "start": "node ./dist/index.js",
         "lint": "eslint --fix src/",
         "prepare": "husky install"
     },
@@ -28,11 +28,6 @@
         "sqlite3": "^5.0.5",
         "validator": "^13.7.0",
         "winston": "^3.7.2"
-    },
-    "husky": {
-        "hooks": {
-            "pre-push": "npm test"
-        }
     },
     "devDependencies": {
         "@faker-js/faker": "^6.2.0",
