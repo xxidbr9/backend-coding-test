@@ -31,7 +31,7 @@
   - [X] Do PR 
   - [X] Code change
   - [X] 100% Test coverage
-  - [ ] New Documentation
+  - [X] New Documentation
 ==========
 - [ ] Fix SQL injection on ID
   - [ ] Do PR

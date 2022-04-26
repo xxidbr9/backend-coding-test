@@ -8,21 +8,19 @@ const sqlite3 = sqliteBase.verbose()
 const db = new sqlite3.Database(':memory:');
 const dbEach = db.each
 describe("Checking DB infrastructure", () => {
-
-  beforeEach((done) => {
-    db.serialize(() => {
-      buildSchemas(db);
-      db.each = dbEach
-      done()
-    });
-  })
-
-  afterEach((done) => {
-
-    return db.run("DROP TABLE Rides", done)
-  })
-
   describe("Find query or select", () => {
+    beforeEach((done) => {
+      db.serialize(() => {
+        buildSchemas(db);
+        db.each = dbEach
+        done()
+      });
+    })
+  
+    afterEach((done) => {
+      return db.run("DROP TABLE Rides", done)
+    })
+
     it("Mock if DB rejected", async (data: Mocha.Done) => {
       const each = Sinon.stub(db, "each")
       each.yieldsRight(new Error("this is error callbackError"))
