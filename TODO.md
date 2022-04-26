@@ -24,13 +24,13 @@
   - [ ] Separate test for each service 100% coverage
   - [ ] Do PR 
 ===========
-- [ ] Change Sequelize Callback to `async/await`
+- [ ] Change Callback to `async/await`
 - [ ] PR with 100% Coverage 
 ===========
-- [ ] Pagination for select
-  - [ ] Do PR 
-  - [ ] Code change
-  - [ ] 100% Test coverage
+- [X] Pagination for select
+  - [X] Do PR 
+  - [X] Code change
+  - [X] 100% Test coverage
   - [ ] New Documentation
 ==========
 - [ ] Fix SQL injection on ID
