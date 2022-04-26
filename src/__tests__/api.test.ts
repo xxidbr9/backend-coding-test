@@ -1,18 +1,29 @@
 'use strict';
 import request from 'supertest'
-import sqliteBase, { Database } from 'sqlite3'
-import buildAppWithDb from '../src/app'
-import buildSchemas from '../src/schemas'
+import sqliteBase from 'sqlite3'
+import buildAppWithDb from '../app'
+import buildSchemas from '../schemas'
 import assert from 'assert'
 import { StatusCodes } from 'http-status-codes';
 import Sinon from 'sinon';
+
 const sqlite3 = sqliteBase.verbose()
 const db = new sqlite3.Database(':memory:');
-const db2 = new sqlite3.Database(':memory:');
 
 const app = buildAppWithDb(db)
 const dbAll = db.all
 
+const fakeData = [
+    [80, 80, 70, 85, "Barnando", "Josh", "car"],
+    [80, 80, 70, 85, "Barnando", "Josh", "car"],
+    [80, 80, 70, 85, "Barnando", "Josh", "car"],
+    [80, 80, 70, 85, "Barnando", "Josh", "car"],
+]
+
+let fakeDataPlaceholder = fakeData.map(() => "(?, ?, ?, ?, ?, ?, ?)").join(', ');
+let flatData = [];
+let fakeBulkQuery = "INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES " + fakeDataPlaceholder;
+fakeData.forEach((arr) => { arr.forEach((item) => { flatData.push(item) }) });
 
 describe('API tests', () => {
     describe('GET /health', () => {
@@ -67,10 +78,11 @@ describe('API tests', () => {
             })
 
 
-            it("should not return RIDES_NOT_FOUND_ERROR before adding new rides", (done) => {
+            it("should return RIDES_NOT_FOUND_ERROR before adding new rides", (done) => {
                 db.run("DELETE FROM Rides", () => {
                     request(app)
                         .get('/rides')
+                        .query({ limit: 10, page: 1 })
                         .expect('Content-Type', /json/)
                         .expect(response => {
                             assert.equal(response.status, StatusCodes.NOT_FOUND)
@@ -80,19 +92,39 @@ describe('API tests', () => {
                 })
             })
 
-            it("should return all Rides ", done => {
-                const values = [
-                    80,
-                    80,
-                    70,
-                    85,
-                    "Barnando",
-                    "Josh",
-                    "car"
-                ];
-                db.run("INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)", values, () => {
+            it("invalid limit,should return VALIDATION_ERROR", done => {   
+                db.run("INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)", fakeData[0], () => {
                     request(app)
                         .get('/rides')
+                        .query({ limit: -1 })
+                        .expect('Content-Type', /json/)
+                        .expect(response => {
+                            assert.equal(response.status, StatusCodes.BAD_REQUEST)
+                            assert.equal(response.body.error_code, "VALIDATION_ERROR")
+                        })
+                        .end(done)
+                })
+            })
+
+            it("invalid page, should return VALIDATION_ERROR ", done => {   
+                db.run("INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)", fakeData[0], () => {
+                    request(app)
+                        .get('/rides')
+                        .query({ page: -1 })
+                        .expect('Content-Type', /json/)
+                        .expect(response => {
+                            assert.equal(response.status, StatusCodes.BAD_REQUEST)
+                            assert.equal(response.body.error_code, "VALIDATION_ERROR")
+                        })
+                        .end(done)
+                })
+            })
+
+            it("should return all Rides ", done => {   
+                db.run("INSERT INTO Rides(startLat, startLong, endLat, endLong, riderName, driverName, driverVehicle) VALUES (?, ?, ?, ?, ?, ?, ?)", fakeData[0], () => {
+                    request(app)
+                        .get('/rides')
+                        .query({ limit: 1, page: 1 })
                         .expect('Content-Type', /json/)
                         .expect(response => {
                             assert.equal(response.status, StatusCodes.OK)
@@ -108,6 +140,7 @@ describe('API tests', () => {
                 db.serialize(() => {
                     buildSchemas(db);
                     isDBDeleted = false
+                    db.all = dbAll
                     done()
                 });
             });
@@ -132,7 +165,7 @@ describe('API tests', () => {
                 })
             })
 
-            it("should not return RIDES_NOT_FOUND_ERROR before adding new rides", (done) => {
+            it("should return RIDES_NOT_FOUND_ERROR before adding new rides", (done) => {
                 db.run("DELETE FROM Rides", () => {
                     request(app)
                         .get('/rides/1')
@@ -175,6 +208,7 @@ describe('API tests', () => {
                 db.serialize(() => {
                     buildSchemas(db);
                     isDBDeleted = false
+                    db.all = dbAll
                     done()
                 });
             });
@@ -291,7 +325,7 @@ describe('API tests', () => {
             it("should return SERVER_ERROR", (done) => {
                 const all = Sinon.stub(db, 'all');
                 all.yieldsRight(new Error());
-                
+
                 request(app)
                     .post("/rides")
                     .send(mockRequestBody)
@@ -305,7 +339,6 @@ describe('API tests', () => {
             })
 
             it("should success add new rides", (done) => {
-                db.all = dbAll
                 request(app)
                     .post("/rides")
                     .send(mockRequestBody)

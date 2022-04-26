@@ -2,16 +2,44 @@ import express from "express";
 import bodyParser from "body-parser";
 import { Database } from "sqlite3";
 import { StatusCodes } from "http-status-codes";
+import log from "./utils/libs/log";
+import validator from 'validator'
+
+import respOk from './infrastructure/transport/http/respOk'
+import { Query } from "./infrastructure/db/Query";
 
 const app = express();
 const jsonParser = bodyParser.json();
 
 const buildAppWithDb = (db: Database) => {
+  const sqlQuery = new Query(db)
+
   app.get("/health", (req, res) => res.send("Healthy"));
 
   app.get("/rides", (req, res) => {
-    db.all("SELECT * FROM Rides", (err, rows) => {
+
+    let page = Number(req.query.page)
+    let limit = Number(req.query.limit)
+
+    if (limit && !validator.isInt(limit.toString(), { min: 1 })) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error_code: "VALIDATION_ERROR",
+        message: 'limit need to be a number greater than 1',
+      });
+    }
+
+    if (page && !validator.isInt(page.toString(), { min: 0 })) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error_code: "VALIDATION_ERROR",
+        message: 'limit need to be a number greater than 0',
+      });
+    }
+
+    const offset = ((page - 1) * limit)
+
+    db.all(`SELECT * FROM Rides LIMIT ? OFFSET ?`, [limit, offset], async (err, rows) => {
       if (err) {
+        log.error(err)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
           error_code: "SERVER_ERROR",
           message: "Unknown error",
@@ -25,7 +53,15 @@ const buildAppWithDb = (db: Database) => {
         });
       }
 
-      res.status(StatusCodes.OK).json(rows);
+      const result = await sqlQuery.find("SELECT COUNT(*) FROM Rides")
+      const total = result.results[0]['COUNT(*)']
+      const resp = {
+        total,
+        has_next: (page * limit) < total,
+        rides: rows
+      }
+
+      res.status(StatusCodes.OK).json(respOk("success", resp));
     });
   });
 

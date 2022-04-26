@@ -13,7 +13,7 @@
     "checkJs": false,
     "allowJs": true,
     "moduleResolution": "Node",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "types": ["node","mocha"],
     "esModuleInterop": true,
     "experimentalDecorators": true,

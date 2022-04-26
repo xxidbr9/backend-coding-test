@@ -60,7 +60,7 @@ Or go to see all API Spec [here]
 
 Here the example 
 ```text
-https://documenter.getpostman.com/view/7848057/UyrBhvfa
+https://documenter.getpostman.com/view/7848057/UyrDCvYf
 ```
 
 
